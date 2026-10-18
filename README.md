@@ -26,4 +26,6 @@ Esta é a versão atual da landing page CRIS, com a introdução, hero, propósi
 
 O site é estático e não exige instalação ou build. Sirva a pasta `dist/` com um servidor HTTP (por exemplo, `python -m http.server 4173 --directory dist`) e acesse `http://localhost:4173`. Para hospedagem estática, use `dist/` como diretório publicado.
 
+Na Vercel, importe este repositório com Root Directory na raiz (`./`). O arquivo `vercel.json` configura Framework Preset como Other, dispensa instalação/build e publica `dist/`. As seções usam âncoras na mesma página e não precisam de regras de redirecionamento.
+
 O último ajuste mantém o texto de “Como funciona” totalmente visível até a borda da maquete no celular, com uma dissolução curta e fundo opaco. Os arquivos dessa interação têm versão na URL para atualizar o cache do navegador.
