@@ -23,34 +23,49 @@
   mm.add({ motion: '(prefers-reduced-motion: no-preference)', reduce: '(prefers-reduced-motion: reduce)' }, context => {
     if (context.conditions.reduce) { setStep(2); return; }
     experience.classList.add('is-scroll-ready');
+    let frame = 0;
+    let inView = true;
     const followScroll = () => {
+      frame = 0;
+      if (!inView) return;
       const mobile = innerWidth <= 720;
       const beatRects = beats.map(beat => beat.getBoundingClientRect());
-      const visualRect = visual.getBoundingClientRect();
+      const visualRect = mobile ? visual.getBoundingClientRect() : null;
+      const storyRect = mobile ? story.getBoundingClientRect() : null;
       const pinned = mobile && visualRect.top <= 1;
       // Keep the text readable until its first line meets the sticky scene.
       // Clip the story too, so no letters can reappear above the illustration.
-      story.style.setProperty('--story-clip', pinned ? `${Math.max(0, visualRect.bottom - story.getBoundingClientRect().top)}px` : '0px');
+      // Finish all geometry reads before changing any styles.
+      const clip = pinned ? `${Math.max(0, visualRect.bottom - storyRect.top)}px` : '0px';
+      if (story.style.getPropertyValue('--story-clip') !== clip) story.style.setProperty('--story-clip', clip);
       beats.forEach((beat, i) => {
         const opacity = pinned ? Math.max(0, Math.min(1, (beatRects[i].top + 22 - visualRect.bottom) / 22)) : 1;
-        beat.style.setProperty('--beat-opacity', opacity);
+        const value = opacity.toFixed(3);
+        if (beat.style.getPropertyValue('--beat-opacity') !== value) beat.style.setProperty('--beat-opacity', value);
       });
       const threshold = innerWidth <= 720 ? Math.min(innerHeight - 60, Math.max(370, innerHeight * .7)) : innerHeight * .6;
       let index = 0;
       beatRects.forEach((rect, i) => { if (rect.top <= threshold) index = i; });
       setStep(index);
     };
-    window.addEventListener('scroll', followScroll, { passive: true });
-    window.addEventListener('resize', followScroll);
-    document.fonts?.ready.then(followScroll);
+    const schedule = () => { if (!frame && inView) frame = requestAnimationFrame(followScroll); };
+    const observer = new IntersectionObserver(entries => {
+      inView = entries[0].isIntersecting;
+      if (inView) schedule();
+    }, { rootMargin: '200px 0px' });
+    observer.observe(experience);
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    document.fonts?.ready.then(schedule);
     followScroll();
-    gsap.from('.impact-table', { opacity: 0, y: 10, duration: .85, ease: 'power2.out', clearProps: 'transform,opacity', scrollTrigger: { trigger: experience, start: 'top 90%', once: true } });
     return () => {
       experience.classList.remove('is-scroll-ready');
       story.style.removeProperty('--story-clip');
       beats.forEach(beat => beat.style.removeProperty('--beat-opacity'));
-      window.removeEventListener('scroll', followScroll);
-      window.removeEventListener('resize', followScroll);
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
     };
   });
   document.fonts?.ready.then(() => ScrollTrigger.refresh());

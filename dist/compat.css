@@ -11,7 +11,14 @@ main{min-width:0;max-width:100%}
 .hero,.pocket{overflow:hidden;overflow:clip}
 .hero-copy,.companies-copy,.company-form-wrap,.faq-heading,.faq-list{min-width:0}
 @media(max-width:720px){
+ .pillar,.pillar+.pillar{padding:24px 0 25px}
+ .pillar:before{display:none}
+ .pillar-top{position:relative;min-height:32px;margin-bottom:16px;gap:16px}
+ .pillar-index{position:static}
+ .pillar-top svg{position:static;display:block;flex:0 0 32px;width:32px;height:32px}
  .scroll-visual:before{inset-inline:0!important}
  .phone-stage{width:100%;max-width:100%}
  .phone-orbit{max-width:calc(100% - 8px)}
 }
+/* Avoid filter interpolation while the sticky 3D scene changes state. */
+.impact-scroll .mini-shop,.impact-scroll .mini-bag,.impact-scroll .project-model{transition-property:transform,opacity}
