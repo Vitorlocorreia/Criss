@@ -38,7 +38,7 @@ receiptButton.addEventListener('click', () => {
   receiptTimer = setTimeout(() => {
     result.querySelector('strong').textContent = 'Impacto demonstrado!';
     result.querySelector('small').textContent = 'R$ 4,50 para o projeto · valor ilustrativo';
-    receiptButton.textContent = 'Simular novamente ↗';
+    receiptButton.innerHTML = 'Simular novamente <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 18 18 6M6 6h12v12"/></svg>';
     receiptButton.disabled = false;
   }, motionPreference.matches ? 0 : 1000);
 });

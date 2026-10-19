@@ -130,7 +130,7 @@ try {
   button.addEventListener('click', () => {
     paused = !paused; button.setAttribute('aria-pressed', String(paused));
     button.setAttribute('aria-label', paused ? 'Retomar animação' : 'Pausar animação');
-    button.firstElementChild.textContent = paused ? '▷' : 'Ⅱ';
+    button.firstElementChild.innerHTML = paused ? '<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m7 4 13 8-13 8Z"/></svg>' : '<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 5v14M16 5v14"/></svg>';
     if (frame !== undefined) { cancelAnimationFrame(frame); frame = undefined; } resume();
   });
   new IntersectionObserver(([entry]) => {
